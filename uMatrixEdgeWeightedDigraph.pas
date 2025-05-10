@@ -244,16 +244,28 @@ implementation
   
   { Ejercicio 1.2 a) }
   function outdegree(var g: edgeWeightedDigraph; node:string): integer;
+  var
+    count, i, index: Integer;
   begin
-      writeln('No implementado');
-      outdegree:= 0;
+      count:= 0;
+      index := get_index(g, node);
+      for i:= 1 to g.num_nodes do
+        if g.matrix[index, i] <> 'inf' then
+          count += 1;
+      outdegree:= count;
   end;
 
   { Ejercicio 1.2 b) }
   function indegree(var g: edgeWeightedDigraph; node:string): integer;
+  var
+    count, i, index: Integer;
   begin
-      writeln('No implementado');
-      indegree:= 0;
+      count:= 0;
+      index := get_index(g, node);
+      for i:= 1 to g.num_nodes do
+        if g.matrix[i, index] <> 'inf' then
+          count += 1;
+      indegree:= count;
   end;
 
   
@@ -261,54 +273,116 @@ implementation
   { Ejercicio 1.2 c) }
   function degree(var g: edgeWeightedDigraph; node:string): integer;
   begin
-      writeln('No implementado');
-      degree:= 0;
+      degree:= indegree(g , node) + outdegree(g, node);
   end;
 
 
 
   { Ejercicio 1.3 a) }
   function weighted_indegree(var g: edgeWeightedDigraph; node:string): integer;
+  var
+    count, valResult, i, index: Integer;
   begin
-      writeln('No implementado');
-      weighted_indegree:= 0;
+      count:= 0;
+      index := get_index(g, node);
+      for i:= 1 to g.num_nodes do
+        if g.matrix[i, index] <> 'inf' then
+        begin
+          Val(g.matrix[i, index], valResult);
+          count += valResult;
+        end;
+      weighted_indegree:= count;
   end;
 
   
 { Ejercicio 1.3 b) }
 function weighted_outdegree(var g: edgeWeightedDigraph; node:string): integer;
-  begin
-    writeln('No implementado');
-    weighted_outdegree:= 0;
-  end;
+var
+  count, valResult, i, index: Integer;
+begin
+    count:= 0;
+    index := get_index(g, node);
+    for i:= 1 to g.num_nodes do
+      if g.matrix[index, i] <> 'inf' then
+      begin
+        Val(g.matrix[index, i], valResult);
+        count +=  valResult;
+      end;
+    weighted_outdegree:= count;
+end;
 
 { Ejercicio 1.4 }
 function has_self_loops(g: edgeWeightedDigraph): boolean;
+var
+  i: Integer;
+  loops: Boolean;
+begin
+  loops := False;
+  i := 0;
+  while (i < g.num_nodes) and not loops do
   begin
-    writeln('No implementado');
-    has_self_loops:= false;
+    i += 1;
+    loops := g.matrix[i, i] <> 'inf';
+  end;
+  has_self_loops:= loops;
 end;
 
 { Ejercicio 1.5 }
-function density(g: edgeWeightedDigraph): real;
+function num_edges(g: edgeWeightedDigraph): Integer;
+var
+  i, j, count: Integer;
 begin
-  writeln('No implementado');
-  density:= 0.0;
+  count := 0;
+  for i:= 1 to g.num_nodes do
+    for j := 1 to g.num_nodes do
+      if g.matrix[i,j] <> 'inf' then
+         count += 1;
+  num_edges := count;
 end;
 
+function density(g: edgeWeightedDigraph): real;
+var
+  e, n: Integer;
+begin
+  e:= num_edges(g);
+  n:= g.num_nodes;
+  density:= e / (n*(n-1));
+end;
 
 { Ejercicio 1.6 }
 function is_complete(g: edgeWeightedDigraph): boolean;
+var
+  i, j: Integer;
+  complete: Boolean;
 begin
-  writeln('No implementado');
-  is_complete:= false;
+  i:= 1;
+  j:= 0;
+  complete:= True;
+  while (i < g.num_nodes) and complete do
+    if j < g.num_nodes then
+    begin
+      j += 1;
+      if i <> j then
+         complete := g.matrix[i,j] <> 'inf';
+    end else
+    begin
+      j := 0;
+      i += 1;
+    end;
+  is_complete:= complete;
 end;
 
 { Ejercicio 1.7 }
 procedure neighbors(g: edgeWeightedDigraph; node: string; var lista: tListaDoble);
+var
+    i, index: Integer;
 begin
-  writeln('No implementado');
-  uListaEnlazadaDoble.initialize(lista); // Inicializa la lista de vecinos
+  // Inicializa la lista de vecinos
+  uListaEnlazadaDoble.initialize(lista);
+  index := get_index(g, node);
+  for i:= 1 to g.num_nodes do
+      if (g.matrix[index, i] <> 'inf') and (i <> index) then
+          uListaEnlazadaDoble.insert_at_end(lista,g.node_labels[i]);
 end;
 
 
